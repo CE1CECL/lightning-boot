@@ -1,0 +1,13 @@
+These are some tests done by using open() and read() on a JFFS2 image rather
+than reading via the NAND controller on the target.  The goal is to:
+1) parse the image
+2) find a desired file from a path
+3) "cat" it to an output buffer
+
+This code is heavily based on jffs2dump.c, and uses some header files from the
+mtd-utils directory.
+
+Files:
+	jffs2cat.c -- simple test program using open() and read()
+	libjffs2.c -- the actual JFFS2 routines, derived from jffs2dump.c and
+                      intended to be moved into lightning-boot shortly.
