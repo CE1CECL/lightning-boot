@@ -30,6 +30,7 @@
 #define NFDATA8()		REG8(LF1000_NAND_BASE+NFDATA)
 #define NFDATA16()		REG16(LF1000_NAND_BASE+NFDATA)
 #define NFDATA32()		REG32(LF1000_NAND_BASE+NFDATA)
+#define nand_data8(d)		(REG8(LF1000_NAND_BASE+NFDATA) = (d))
 
 /*
  * internal functions
@@ -70,6 +71,67 @@ int nand_check_block(u32 offset)
 		}
 	}
 
+	return 0;
+}
+
+
+#define NAND_CMD_RESET 0xff
+#define NAND_CMD_SEQIN 0x80
+#define NAND_CMD_ERASE1 0x60
+#define NAND_CMD_ERASE2 0xd0
+#define NAND_CMD_PAGEPROG 0x10
+/* Work-around for Micron 512MB flash forgetting it's Bad-block marks */
+int nand_wake_bbt ()
+{
+#if 0
+	/* Works, but ugly.  Force a bad-block mark on block 4095 */
+	u32 i;
+	u32 block_num = 4095-1;
+	u32 offset = block_num * NAND_EB_SIZE;
+	u32 page = offset>>11;
+	u32 column = NAND_PAGE_SIZE;
+
+	nand_command (NAND_CMD_ERASE1);
+	nand_address(page>>0);
+	nand_address(page>>8);
+	nand_address(page>>16);
+	nand_command (NAND_CMD_ERASE2);
+	nand_wait_for_ready ();
+	nand_command (NAND_CMD_RESET);
+	nand_wait_for_ready ();
+	nand_command (NAND_CMD_SEQIN);
+	nand_address(column>>0);
+	nand_address(column>>8);
+	nand_address(page>>0);
+	nand_address(page>>8);
+	nand_address(page>>16);
+	nand_data8 (0);
+	nand_data8 (0);
+	for (i=2; i<64; i++)
+		nand_data8 (0xff);
+	nand_command (NAND_CMD_PAGEPROG);
+	nand_wait_for_ready ();
+#else
+	u32 tmp;
+
+	/* Select cart */
+	tmp = REG32(LF1000_MCU_S_BASE+NFCONTROL);
+	BIT_SET(tmp, NFBANK);
+	REG32(LF1000_MCU_S_BASE+NFCONTROL)=tmp;
+
+	/* This works to wake up BBT in micron parts */
+	nand_command (NAND_CMD_RESET);
+	nand_wait_for_ready ();
+
+	/* Select base */
+	tmp = REG32(LF1000_MCU_S_BASE+NFCONTROL);
+	BIT_CLR(tmp, NFBANK);
+	REG32(LF1000_MCU_S_BASE+NFCONTROL)=tmp;
+
+	/* Do it for base, in case we're booting from ATAP */
+	nand_command (NAND_CMD_RESET);
+	nand_wait_for_ready ();
+#endif
 	return 0;
 }
 

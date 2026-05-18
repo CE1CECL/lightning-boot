@@ -14,8 +14,14 @@
 	 ((unsigned int)(p) << PDIV_0) | \
 	 ((unsigned int)(s) << SDIV_0))
 
-/* PLL0 (CPU clock) 393216000 Hz */
+#if defined   CONFIG_CPU_SPEED_532480000 /* PLL0 (CPU clock) 532480000 Hz */
+#define PLL_CLOCK0	PLL_REG(355, 18, 0)
+
+#elif defined CONFIG_CPU_SPEED_393216000 /* PLL0 (CPU clock) 393216000 Hz */
 #define PLL_CLOCK0	PLL_REG(801, 55, 0)
+#else
+#error CPU SPEED not defined
+#endif
 
 /* PLL1 (bus clock) 147000000 Hz */
 #define PLL_CLOCK1	PLL_REG(196, 9, 2)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CURRENT_MAJOR_VERSION=1.0.3
+CURRENT_MAJOR_VERSION=1.35.2
 
 set -e
 

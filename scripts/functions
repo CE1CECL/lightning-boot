@@ -30,6 +30,30 @@ function check_vars() {
 		echo "Please set PROJECT_PATH environment variable."
 		exit 1
 	fi
+	
+	if [ "$BRIO" == "1" ]; then
+		if [ "X$BRIO_PATH" == "X" ]; then
+			BRIO_PATH=~/workspace/Brio2/
+			echo "BRIO_PATH not set.  Using default $BRIO_PATH"
+		fi
+
+		if [ ! -d $BRIO_PATH ]; then
+			echo "Error: BRIO_PATH $BRIO_PATH does not exist."
+			echo "Please set BRIO_PATH environment variable."
+			exit 1
+		fi
+
+		if [ "X$LIGHTNING_CORE_PATH" == "X" ]; then
+			LIGHTNING_CORE_PATH=~/workspace/LightningCore/
+			echo "LIGHTNING_CORE_PATH not set.  Using default $LIGHTNING_CORE_PATH"
+		fi
+
+		if [ ! -d $LIGHTNING_CORE_PATH ]; then
+			echo "Error: LIGHTNING_CORE_PATH $LIGHTNING_CORE_PATH does not exist."
+			echo "Please set LIGHTNING_CORE_PATH environment variable."
+			exit 1
+		fi
+	fi
 
 	if [ "X$CROSS_COMPILE" == "X" ]; then
 		export CROSS_COMPILE=arm-linux-

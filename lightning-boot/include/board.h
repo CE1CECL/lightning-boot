@@ -41,18 +41,14 @@
  */
 
 /* Base command line */
-#if defined CONFIG_MACH_LF_MP2530F 
-#define CMDLINE_BASE "mem=32M init=/sbin/init console=ttyS3,115200 "
-
-#elif defined CONFIG_MACH_ME_LF1000
-#define CMDLINE_BASE "mem=50M init=/sbin/init console=ttyS0,115200 "
-
-#elif defined CONFIG_MACH_LF_LF1000
+#if defined   CONFIG_RAM_18MB
 #define CMDLINE_BASE "mem=18M init=/sbin/init console=ttyS0,115200 "
-
+#elif defined CONFIG_RAM_32MB
+#define CMDLINE_BASE "mem=32M init=/sbin/init console=ttyS3,115200 "
+#elif defined CONFIG_RAM_50MB
+#define CMDLINE_BASE "mem=50M init=/sbin/init console=ttyS0,115200 "
 #else
-#error "MACHINE TYPE NOT SUPPORTED"
-
+#error "RAM SIZE not set"
 #endif
 
 /* command line rootfs components */

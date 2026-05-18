@@ -252,6 +252,8 @@ static void load_cart_id(void)
 #define load_cart_id(...)
 #endif
 
+int nand_wake_bbt ();
+
 /*
  * main application
  */
@@ -277,6 +279,9 @@ void main(void)
 	/* disable the USB controller */
 	BIT_SET(REG16(LF1000_UDC_BASE+UDC_PCR), PCE);
 #endif
+	/* Work-around for Micron 512MB flash forgetting it's Bad-block marks */
+	nand_wake_bbt ();
+
 	adc_init();
 	board_id = load_board_id();
 	display_backlight(board_id);
